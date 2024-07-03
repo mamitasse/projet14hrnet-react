@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import DataTable from 'react-data-table-component';
 import './EmployeeList.css';
+// faire attention utilisation du tableau
 
 const EmployeeList = () => {
     const [employees, setEmployees] = useState([]);
