@@ -3,14 +3,18 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import DataTable from 'react-data-table-component';
 import './EmployeeList.css';
-// faire attention utilisation du tableau
 
 const EmployeeList = () => {
     const [employees, setEmployees] = useState([]);
 
     useEffect(() => {
         const storedEmployees = JSON.parse(localStorage.getItem('employees')) || [];
-        setEmployees(storedEmployees);
+        const formattedEmployees = storedEmployees.map(employee => ({
+            ...employee,
+            dateOfBirth: new Date(employee.dateOfBirth),
+            startDate: new Date(employee.startDate),
+        }));
+        setEmployees(formattedEmployees);
     }, []);
 
     const columns = [
@@ -26,7 +30,7 @@ const EmployeeList = () => {
         },
         {
             name: 'Start Date',
-            selector: row => row.startDate,
+            selector: row => row.startDate.toLocaleDateString(),
             sortable: true
         },
         {
@@ -36,7 +40,7 @@ const EmployeeList = () => {
         },
         {
             name: 'Date of Birth',
-            selector: row => row.dateOfBirth,
+            selector: row => row.dateOfBirth.toLocaleDateString(),
             sortable: true
         },
         {

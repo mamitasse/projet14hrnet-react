@@ -4,10 +4,10 @@ import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import Modal from 'react-modal';
 import { Link } from 'react-router-dom';
-
 import './CreateEmployee.css';
 
 Modal.setAppElement('#root');
+
 const states = [
     {
         "name": "Alabama",
@@ -275,7 +275,12 @@ const CreateEmployee = () => {
 
     const saveEmployee = () => {
         const employees = JSON.parse(localStorage.getItem('employees')) || [];
-        employees.push(formData);
+        const newEmployee = {
+            ...formData,
+            dateOfBirth: formData.dateOfBirth.toISOString(),
+            startDate: formData.startDate.toISOString(),
+        };
+        employees.push(newEmployee);
         localStorage.setItem('employees', JSON.stringify(employees));
         setModalIsOpen(true);
     };
