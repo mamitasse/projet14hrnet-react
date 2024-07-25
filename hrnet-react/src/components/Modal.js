@@ -1,14 +1,23 @@
-// src/components/Modal.js
 import React from 'react';
-import Modal from 'react-modal';
+import 'react-modal-component-tasse2'; // Assurez-vous que ce composant existe et fonctionne correctement
+import './Modal.css';
 
-Modal.setAppElement('#root');
+const CustomModal = ({ isOpen, onClose, children }) => {
+    if (!isOpen) {
+        return null;
+    }
 
-const CustomModal = ({ isOpen, onRequestClose, content }) => (
-    <Modal isOpen={isOpen} onRequestClose={onRequestClose}>
-        {content}
-        <button onClick={onRequestClose}>Close</button>
-    </Modal>
-);
+    return (
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                <button className="modal-close" onClick={onClose}>
+                    &times;
+                </button>
+                {children}
+            </div>
+        </div>
+    );
+};
 
 export default CustomModal;
+

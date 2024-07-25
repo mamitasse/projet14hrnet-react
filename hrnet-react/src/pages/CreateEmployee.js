@@ -1,12 +1,12 @@
-// src/pages/CreateEmployee.js
-import React, { useState } from 'react';
-import DatePicker from 'react-datepicker';
-import "react-datepicker/dist/react-datepicker.css";
-import Modal from 'react-modal';
+import React, { useState, lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import './CreateEmployee.css';
+import FormInput from '../components/FormInput';
+import DatePickerInput from '../components/DatePickerInput';
+import AddressForm from '../components/AddressForm';
 
-Modal.setAppElement('#root');
+// Lazy load CustomModal
+const CustomModal = lazy(() => import('../components/Modal'));
 
 const states = [
     {
@@ -263,6 +263,7 @@ const CreateEmployee = () => {
     });
 
     const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [formErrors, setFormErrors] = useState({});
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -273,16 +274,37 @@ const CreateEmployee = () => {
         setFormData({ ...formData, [name]: date });
     };
 
+    const validateForm = () => {
+        const errors = {};
+        if (!formData.firstName) errors.firstName = "First Name is required";
+        if (!formData.lastName) errors.lastName = "Last Name is required";
+        if (!formData.dateOfBirth) errors.dateOfBirth = "Date of Birth is required";
+        if (!formData.startDate) errors.startDate = "Start Date is required";
+        if (!formData.street) errors.street = "Street is required";
+        if (!formData.city) errors.city = "City is required";
+        if (!formData.state) errors.state = "State is required";
+        if (!formData.zipCode) errors.zipCode = "Zip Code is required";
+        if (!formData.department) errors.department = "Department is required";
+
+        setFormErrors(errors);
+        if (Object.keys(errors).length > 0) {
+            alert("Tous les champs sont obligatoires");
+        }
+        return Object.keys(errors).length === 0;
+    };
+
     const saveEmployee = () => {
-        const employees = JSON.parse(localStorage.getItem('employees')) || [];
-        const newEmployee = {
-            ...formData,
-            dateOfBirth: formData.dateOfBirth.toISOString(),
-            startDate: formData.startDate.toISOString(),
-        };
-        employees.push(newEmployee);
-        localStorage.setItem('employees', JSON.stringify(employees));
-        setModalIsOpen(true);
+        if (validateForm()) {
+            const employees = JSON.parse(localStorage.getItem('employees')) || [];
+            const newEmployee = {
+                ...formData,
+                dateOfBirth: formData.dateOfBirth.toISOString(),
+                startDate: formData.startDate.toISOString(),
+            };
+            employees.push(newEmployee);
+            localStorage.setItem('employees', JSON.stringify(employees));
+            setModalIsOpen(true);
+        }
     };
 
     return (
@@ -291,55 +313,67 @@ const CreateEmployee = () => {
             <Link to="/employee-list">View Current Employees</Link>
             <h2>Create Employee</h2>
             <form id="create-employee">
-                <label htmlFor="first-name">First Name</label>
-                <input type="text" id="first-name" name="firstName" value={formData.firstName} onChange={handleChange} />
-
-                <label htmlFor="last-name">Last Name</label>
-                <input type="text" id="last-name" name="lastName" value={formData.lastName} onChange={handleChange} />
-
-                <label htmlFor="date-of-birth">Date of Birth</label>
-                <DatePicker selected={formData.dateOfBirth} onChange={(date) => handleDateChange(date, 'dateOfBirth')} />
-
-                <label htmlFor="start-date">Start Date</label>
-                <DatePicker selected={formData.startDate} onChange={(date) => handleDateChange(date, 'startDate')} />
-
-                <fieldset className="address">
-                    <legend>Address</legend>
-
-                    <label htmlFor="street">Street</label>
-                    <input id="street" type="text" name="street" value={formData.street} onChange={handleChange} />
-
-                    <label htmlFor="city">City</label>
-                    <input id="city" type="text" name="city" value={formData.city} onChange={handleChange} />
-
-                    <label htmlFor="state">State</label>
-                    <select name="state" id="state" value={formData.state} onChange={handleChange}>
-                        {states.map((state) => (
-                            <option key={state.abbreviation} value={state.abbreviation}>
-                                {state.name}
-                            </option>
-                        ))}
-                    </select>
-
-                    <label htmlFor="zip-code">Zip Code</label>
-                    <input id="zip-code" type="number" name="zipCode" value={formData.zipCode} onChange={handleChange} />
-                </fieldset>
-
-                <label htmlFor="department">Department</label>
-                <select name="department" id="department" value={formData.department} onChange={handleChange}>
-                    {departments.map((dept) => (
-                        <option key={dept} value={dept}>
-                            {dept}
-                        </option>
-                    ))}
-                </select>
+                <FormInput
+                    label="First Name"
+                    type="text"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    required
+                    error={formErrors.firstName}
+                />
+                <FormInput
+                    label="Last Name"
+                    type="text"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    required
+                    error={formErrors.lastName}
+                />
+                <DatePickerInput
+                    label="Date of Birth"
+                    selected={formData.dateOfBirth}
+                    onChange={(date) => handleDateChange(date, 'dateOfBirth')}
+                    name="dateOfBirth"
+                    error={formErrors.dateOfBirth}
+                />
+                <DatePickerInput
+                    label="Start Date"
+                    selected={formData.startDate}
+                    onChange={(date) => handleDateChange(date, 'startDate')}
+                    name="startDate"
+                    error={formErrors.startDate}
+                />
+                <AddressForm
+                    formData={formData}
+                    handleChange={handleChange}
+                    formErrors={formErrors}
+                    states={states}
+                />
+                <FormInput
+                    label="Department"
+                    type="select"
+                    name="department"
+                    options={departments}
+                    value={formData.department}
+                    onChange={handleChange}
+                    required
+                    error={formErrors.department}
+                />
             </form>
-
             <button onClick={saveEmployee}>Save</button>
-            <Modal isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)}>
-                <h2>Employee Created!</h2>
-                <button onClick={() => setModalIsOpen(false)}>Close</button>
-            </Modal>
+            <Suspense fallback={<div>Loading...</div>}>
+                {modalIsOpen && (
+                    <CustomModal
+                        isOpen={modalIsOpen}
+                        onClose={() => setModalIsOpen(false)}
+                    >
+                        <h2>Employee Created!</h2>
+                        <button onClick={() => setModalIsOpen(false)}>Close</button>
+                    </CustomModal>
+                )}
+            </Suspense>
         </div>
     );
 };

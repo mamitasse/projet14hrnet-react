@@ -34,3 +34,7 @@ label {
 .address {
   margin-top: 10px;
 }
+.error{
+  color: red;
+  font-size: 8px;
+}

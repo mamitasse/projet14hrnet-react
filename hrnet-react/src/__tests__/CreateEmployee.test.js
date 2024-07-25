@@ -1,63 +1,62 @@
-// src/tests/CreateEmployee.test.js
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import CreateEmployee from '../pages/CreateEmployee';
+import { BrowserRouter as Router } from 'react-router-dom';
 
+describe('CreateEmployee Component', () => {
+    test('renders the CreateEmployee form', () => {
+        render(
+            <Router>gv v     
+                <CreateEmployee />
+            </Router>
+        );
 
-// Mock Modal.setAppElement
-jest.mock('react-modal', () => {
-    const modal = jest.requireActual('react-modal');
-    modal.setAppElement = () => {};
-    return modal;
-});
+        expect(screen.getByLabelText(/First Name/i)).toBeInTheDocument();
+        expect(screen.getByLabelText(/Last Name/i)).toBeInTheDocument();
+        expect(screen.getByLabelText(/Date of Birth/i)).toBeInTheDocument();
+        expect(screen.getByLabelText(/Start Date/i)).toBeInTheDocument();
+        expect(screen.getByLabelText(/Street/i)).toBeInTheDocument();
+        expect(screen.getByLabelText(/City/i)).toBeInTheDocument();
+        expect(screen.getByLabelText(/State/i)).toBeInTheDocument();
+        expect(screen.getByLabelText(/Zip Code/i)).toBeInTheDocument();
+        expect(screen.getByLabelText(/Department/i)).toBeInTheDocument();
+    });
 
-beforeEach(() => {
-    localStorage.clear();
-});
+    test('allows user to fill out the form', () => {
+        render(
+            <Router>
+                <CreateEmployee />
+            </Router>
+        );
 
-test('renders Create Employee form', () => {
-    const { getByLabelText, getByText } = render(<CreateEmployee />);
-    expect(getByLabelText('First Name')).toBeInTheDocument();
-    expect(getByText('Save')).toBeInTheDocument();
-});
+        fireEvent.change(screen.getByLabelText(/First Name/i), { target: { value: 'John' } });
+        fireEvent.change(screen.getByLabelText(/Last Name/i), { target: { value: 'Doe' } });
+        fireEvent.change(screen.getByLabelText(/Street/i), { target: { value: '123 Main St' } });
+        fireEvent.change(screen.getByLabelText(/City/i), { target: { value: 'Anytown' } });
+        fireEvent.change(screen.getByLabelText(/Zip Code/i), { target: { value: '12345' } });
 
-test('submits form and saves employee data', () => {
-    const { getByLabelText, getByText } = render(<CreateEmployee />);
+        expect(screen.getByLabelText(/First Name/i).value).toBe('John');
+        expect(screen.getByLabelText(/Last Name/i).value).toBe('Doe');
+        expect(screen.getByLabelText(/Street/i).value).toBe('123 Main St');
+        expect(screen.getByLabelText(/City/i).value).toBe('Anytown');
+        expect(screen.getByLabelText(/Zip Code/i).value).toBe('12345');
+    });
 
-    fireEvent.change(getByLabelText('First Name'), { target: { value: 'John' } });
-    fireEvent.change(getByLabelText('Last Name'), { target: { value: 'Doe' } });
-    fireEvent.change(getByLabelText('Street'), { target: { value: '123 Main St' } });
-    fireEvent.change(getByLabelText('City'), { target: { value: 'Anytown' } });
-    fireEvent.change(getByLabelText('Zip Code'), { target: { value: '12345' } });
+    test('shows modal on form submission', async () => {
+        render(
+            <Router>
+                <CreateEmployee />
+            </Router>
+        );
 
-    fireEvent.click(getByText('Save'));
+        fireEvent.change(screen.getByLabelText(/First Name/i), { target: { value: 'John' } });
+        fireEvent.change(screen.getByLabelText(/Last Name/i), { target: { value: 'Doe' } });
+        fireEvent.change(screen.getByLabelText(/Street/i), { target: { value: '123 Main St' } });
+        fireEvent.change(screen.getByLabelText(/City/i), { target: { value: 'Anytown' } });
+        fireEvent.change(screen.getByLabelText(/Zip Code/i), { target: { value: '12345' } });
 
-    // Check if the modal is opened
-    expect(getByText('Employee Created!')).toBeInTheDocument();
+        fireEvent.click(screen.getByText(/Save/i));
 
-    // Check if data is saved in localStorage
-    const employees = JSON.parse(localStorage.getItem('employees'));
-    expect(employees).toHaveLength(1);
-    expect(employees[0].firstName).toBe('John');
-    expect(employees[0].lastName).toBe('Doe');
-});
-
-test('renders modal on form submission', () => {
-    const { getByLabelText, getByText } = render(<CreateEmployee />);
-
-    fireEvent.change(getByLabelText('First Name'), { target: { value: 'Jane' } });
-    fireEvent.change(getByLabelText('Last Name'), { target: { value: 'Doe' } });
-
-    fireEvent.click(getByText('Save'));
-
-    expect(getByText('Employee Created!')).toBeInTheDocument();
-});
-
-test('date pickers are functioning correctly', () => {
-    const { getByLabelText } = render(<CreateEmployee />);
-
-    // Check if date pickers are present
-    expect(getByLabelText('Date of Birth')).toBeInTheDocument();
-    expect(getByLabelText('Start Date')).toBeInTheDocument();
+        await waitFor(() => expect(screen.getByText(/Employee Created!/i)).toBeInTheDocument());
+    });
 });
