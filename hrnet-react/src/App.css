@@ -2,9 +2,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  color: blueviolet;
 }
 
-
+h1{
+  color: blueviolet;
+}
 .container {
   display: flex;
   flex-direction: column;

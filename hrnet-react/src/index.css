@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+background-color: antiquewhite;
 }
 
 code {
@@ -37,4 +38,8 @@ label {
 .error{
   color: red;
   font-size: 8px;
+}
+
+h1{
+  color: blueviolet;
 }
