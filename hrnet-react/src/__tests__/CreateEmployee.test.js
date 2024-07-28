@@ -1,10 +1,12 @@
+// src/__tests__/CreateEmployee.test.js
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import CreateEmployee from '../pages/CreateEmployee';
+import { renderWithProviders } from '../testUtils'; // Assurez-vous d'importer la bonne fonction utilitaire
 
 test('renders CreateEmployee component', () => {
-  render(
+  renderWithProviders(
     <MemoryRouter>
       <CreateEmployee />
     </MemoryRouter>
@@ -13,7 +15,7 @@ test('renders CreateEmployee component', () => {
 });
 
 test('validates form input', () => {
-  render(
+  renderWithProviders(
     <MemoryRouter>
       <CreateEmployee />
     </MemoryRouter>
@@ -21,4 +23,3 @@ test('validates form input', () => {
   fireEvent.click(screen.getByText(/Save/i));
   expect(screen.getByText(/First Name is required/i)).toBeInTheDocument();
 });
-

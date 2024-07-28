@@ -1,11 +1,11 @@
 import React, { useState, lazy, Suspense } from 'react';
+import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import './CreateEmployee.css';
+import { addEmployee } from '../Redux/employeeSlice';
 import FormInput from '../components/FormInput';
 import DatePickerInput from '../components/DatePickerInput';
 import AddressForm from '../components/AddressForm';
 
-// Lazy load CustomModal
 const CustomModal = lazy(() => import('../components/Modal'));
 
 const states = [
@@ -250,6 +250,8 @@ const states = [
 const departments = ["Sales", "Marketing", "Engineering", "Human Resources", "Legal"];
 
 const CreateEmployee = () => {
+    const dispatch = useDispatch();
+
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -295,14 +297,12 @@ const CreateEmployee = () => {
 
     const saveEmployee = () => {
         if (validateForm()) {
-            const employees = JSON.parse(localStorage.getItem('employees')) || [];
             const newEmployee = {
                 ...formData,
                 dateOfBirth: formData.dateOfBirth.toISOString(),
                 startDate: formData.startDate.toISOString(),
             };
-            employees.push(newEmployee);
-            localStorage.setItem('employees', JSON.stringify(employees));
+            dispatch(addEmployee(newEmployee));
             setModalIsOpen(true);
         }
     };

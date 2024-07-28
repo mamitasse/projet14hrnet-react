@@ -1,21 +1,12 @@
 // src/pages/EmployeeList.js
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import DataTable from 'react-data-table-component';
-import './EmployeeList.css';
+
 
 const EmployeeList = () => {
-    const [employees, setEmployees] = useState([]);
-
-    useEffect(() => {
-        const storedEmployees = JSON.parse(localStorage.getItem('employees')) || [];
-        const formattedEmployees = storedEmployees.map(employee => ({
-            ...employee,
-            dateOfBirth: new Date(employee.dateOfBirth),
-            startDate: new Date(employee.startDate),
-        }));
-        setEmployees(formattedEmployees);
-    }, []);
+    const employees = useSelector((state) => state.employees);
 
     const columns = [
         {
@@ -30,7 +21,7 @@ const EmployeeList = () => {
         },
         {
             name: 'Start Date',
-            selector: row => row.startDate.toLocaleDateString(),
+            selector: row => new Date(row.startDate).toLocaleDateString(),
             sortable: true
         },
         {
@@ -40,7 +31,7 @@ const EmployeeList = () => {
         },
         {
             name: 'Date of Birth',
-            selector: row => row.dateOfBirth.toLocaleDateString(),
+            selector: row => new Date(row.dateOfBirth).toLocaleDateString(),
             sortable: true
         },
         {
