@@ -1,56 +1,63 @@
-// src/pages/EmployeeList.js
-import React from 'react';
-import { useSelector } from 'react-redux';
+// Dans EmployeeList.js
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import DataTable from 'react-data-table-component';
-
+import { loadEmployees } from '../Redux/employeeSlice';
 
 const EmployeeList = () => {
-    const employees = useSelector((state) => state.employees);
+    const dispatch = useDispatch();
+    const employees = useSelector((state) => state.employees.employees);
+
+    useEffect(() => {
+        const storedEmployees = JSON.parse(localStorage.getItem('employees')) || [];
+        // Pas besoin de convertir en Date ici
+        dispatch(loadEmployees(storedEmployees));
+    }, [dispatch]);
 
     const columns = [
         {
-            name: 'First Name',
+            name: 'Prénom',
             selector: row => row.firstName,
             sortable: true
         },
         {
-            name: 'Last Name',
+            name: 'Nom',
             selector: row => row.lastName,
             sortable: true
         },
         {
-            name: 'Start Date',
+            name: 'Date de début',
             selector: row => new Date(row.startDate).toLocaleDateString(),
             sortable: true
         },
         {
-            name: 'Department',
+            name: 'Département',
             selector: row => row.department,
             sortable: true
         },
         {
-            name: 'Date of Birth',
+            name: 'Date de naissance',
             selector: row => new Date(row.dateOfBirth).toLocaleDateString(),
             sortable: true
         },
         {
-            name: 'Street',
+            name: 'Rue',
             selector: row => row.street,
             sortable: true
         },
         {
-            name: 'City',
+            name: 'Ville',
             selector: row => row.city,
             sortable: true
         },
         {
-            name: 'State',
+            name: 'État',
             selector: row => row.state,
             sortable: true
         },
         {
-            name: 'Zip Code',
+            name: 'Code Postal',
             selector: row => row.zipCode,
             sortable: true
         }
@@ -58,13 +65,13 @@ const EmployeeList = () => {
 
     return (
         <div className="container">
-            <h1>Current Employees</h1>
+            <h1>Employés Actuels</h1>
             <DataTable
                 columns={columns}
                 data={employees}
                 pagination
             />
-            <Link to="/">Home</Link>
+            <Link to="/">Accueil</Link>
         </div>
     );
 };

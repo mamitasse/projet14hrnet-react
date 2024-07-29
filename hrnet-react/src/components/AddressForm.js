@@ -1,9 +1,12 @@
 import React from 'react';
 import FormInput from './FormInput';
 
+// Le composant AddressForm est une partie du formulaire utilisé pour saisir l'adresse de l'employé
 const AddressForm = ({ formData, handleChange, formErrors, states }) => (
     <fieldset className="address">
         <legend>Address</legend>
+        
+        {/* Champ de saisie pour la rue */}
         <FormInput
             label="Street"
             type="text"
@@ -13,6 +16,8 @@ const AddressForm = ({ formData, handleChange, formErrors, states }) => (
             required
             error={formErrors.street}
         />
+        
+        {/* Champ de saisie pour la ville */}
         <FormInput
             label="City"
             type="text"
@@ -22,6 +27,8 @@ const AddressForm = ({ formData, handleChange, formErrors, states }) => (
             required
             error={formErrors.city}
         />
+        
+        {/* Champ de sélection pour l'état */}
         <div className="form-group">
             <label htmlFor="state">State</label>
             <select
@@ -32,14 +39,18 @@ const AddressForm = ({ formData, handleChange, formErrors, states }) => (
                 aria-label="State"
                 required
             >
+                {/* Boucle à travers les états et créer une option pour chacun */}
                 {states.map(state => (
                     <option key={state.abbreviation} value={state.abbreviation}>
                         {state.name}
                     </option>
                 ))}
             </select>
+            {/* Afficher un message d'erreur si le champ état n'est pas valide */}
             {formErrors.state && <p className="error">{formErrors.state}</p>}
         </div>
+        
+        {/* Champ de saisie pour le code postal */}
         <FormInput
             label="Zip Code"
             type="number"
@@ -53,3 +64,4 @@ const AddressForm = ({ formData, handleChange, formErrors, states }) => (
 );
 
 export default AddressForm;
+

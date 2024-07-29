@@ -5,6 +5,11 @@ import { MemoryRouter } from 'react-router-dom';
 import CreateEmployee from '../pages/CreateEmployee';
 import { renderWithProviders } from '../testUtils'; // Assurez-vous d'importer la bonne fonction utilitaire
 
+// Simulez window.alert pour éviter des erreurs pendant les tests
+beforeAll(() => {
+  global.alert = jest.fn();
+});
+
 test('renders CreateEmployee component', () => {
   renderWithProviders(
     <MemoryRouter>
@@ -21,5 +26,6 @@ test('validates form input', () => {
     </MemoryRouter>
   );
   fireEvent.click(screen.getByText(/Save/i));
-  expect(screen.getByText(/First Name is required/i)).toBeInTheDocument();
+  // Utilisez l'affichage du message d'erreur dans le DOM ou simulez alert
+  expect(global.alert).toHaveBeenCalledWith('Tous les champs sont obligatoires');
 });
