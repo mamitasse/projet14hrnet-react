@@ -247,7 +247,6 @@ const states = [
         "abbreviation": "WY"
     }
 ];
-
 const departments = ["Sales", "Marketing", "Engineering", "Human Resources", "Legal"];
 
 const CreateEmployee = () => {
@@ -260,7 +259,7 @@ const CreateEmployee = () => {
         startDate: new Date(),
         street: '',
         city: '',
-        state: '',
+        state: states[0].abbreviation,  // Initialiser avec l'abréviation
         zipCode: '',
         department: departments[0]
     });
