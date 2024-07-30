@@ -1,9 +1,9 @@
-// Dans EmployeeList.js
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import DataTable from 'react-data-table-component';
 import { loadEmployees } from '../Redux/employeeSlice';
+import './EmployeeList.css'; // Import du fichier CSS
 
 const stateAbbreviations = {
     "Alabama": "AL",
@@ -70,67 +70,106 @@ const stateAbbreviations = {
 const EmployeeList = () => {
     const dispatch = useDispatch();
     const employees = useSelector((state) => state.employees.employees);
+    const [sortedEmployees, setSortedEmployees] = useState([]);
+    const [sortDirection, setSortDirection] = useState('asc');
 
     useEffect(() => {
         const storedEmployees = JSON.parse(localStorage.getItem('employees')) || [];
         dispatch(loadEmployees(storedEmployees));
     }, [dispatch]);
 
+    useEffect(() => {
+        setSortedEmployees(employees);
+    }, [employees]);
+
+    const handleSort = () => {
+        const sortedData = [...employees];
+        sortedData.sort((a, b) => {
+            const dateA = new Date(a.startDate);
+            const dateB = new Date(b.startDate);
+            return sortDirection === 'asc' ? dateA - dateB : dateB - dateA;
+        });
+        setSortedEmployees(sortedData);
+        setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    };
+
     const columns = [
         {
-            name: 'First Name',
+            name: <span>First<br />Name</span>,
             selector: row => row.firstName,
-            sortable: true
+            sortable: true,
+            sortFunction: handleSort,
+            headerClassName: 'dataTable-header',
+            className: 'dataTable-cell'
         },
         {
-            name: 'Last Name',
+            name: <span>Last<br />Name</span>,
             selector: row => row.lastName,
-            sortable: true
+            sortable: true,
+            headerClassName: 'dataTable-header',
+            className: 'dataTable-cell'
         },
         {
-            name: 'Start Date',
+            name: <span>Start<br />Date</span>,
             selector: row => new Date(row.startDate).toLocaleDateString(),
-            sortable: true
+            sortable: true,
+            headerClassName: 'dataTable-header',
+            className: 'dataTable-cell'
         },
         {
-            name: 'Départment',
+            name: 'Department',
             selector: row => row.department,
-            sortable: true
+            sortable: true,
+            headerClassName: 'dataTable-header',
+            className: 'dataTable-cell'
         },
         {
-            name: 'Date of Birth',
+            name: <span>Date of<br />Birth</span>,
             selector: row => new Date(row.dateOfBirth).toLocaleDateString(),
-            sortable: true
+            sortable: true,
+            headerClassName: 'dataTable-header',
+            className: 'dataTable-cell'
         },
         {
             name: 'Street',
             selector: row => row.street,
-            sortable: true
+            sortable: true,
+            headerClassName: 'dataTable-header',
+            className: 'dataTable-cell'
         },
         {
-            name: 'Contry',
+            name: 'City',
             selector: row => row.city,
-            sortable: true
+            sortable: true,
+            headerClassName: 'dataTable-header',
+            className: 'dataTable-cell'
         },
         {
             name: 'State',
             selector: row => stateAbbreviations[row.state] || row.state,
-            sortable: true
+            sortable: true,
+            headerClassName: 'dataTable-header',
+            className: 'dataTable-cell'
         },
         {
-            name: 'Zip Code',
+            name: <span>Zip <br/>Code</span>,
             selector: row => row.zipCode,
-            sortable: true
+            sortable: true,
+            headerClassName: 'dataTable-header',
+            className: 'dataTable-cell'
         }
     ];
+    
 
     return (
         <div className="container">
             <h1>Current Employees</h1>
             <DataTable
                 columns={columns}
-                data={employees}
+                data={sortedEmployees}
                 pagination
+                onSort={handleSort}
+                sortServer
             />
             <Link to="/">Accueil</Link>
         </div>

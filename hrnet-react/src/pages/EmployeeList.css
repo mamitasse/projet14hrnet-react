@@ -1,0 +1,21 @@
+/* EmployeeList.css */
+.dataTable-header {
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.dataTable-cell {
+    white-space: pre-wrap; /* Permet le retour à la ligne */
+}
+
+.dataTable-header {
+    
+    font-size: 30px;
+    white-space: pre-wrap; /* Permet le retour à la ligne dans les en-têtes */
+    font-weight: 700;
+    color: black;
+}
+
+.dataTable-cell {
+    white-space: pre-wrap; /* Permet le retour à la ligne dans les cellules */
+}
