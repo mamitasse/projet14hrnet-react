@@ -1,13 +1,14 @@
-import React, { useState, lazy, Suspense } from 'react';
+import React, { useState} from 'react';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { addEmployee } from '../Redux/employeeSlice';
 import FormInput from '../components/FormInput';
 import DatePickerInput from '../components/DatePickerInput';
 import AddressForm from '../components/AddressForm';
+import Modal from 'react-modal-component-tasse2';
+import "./createEmployee.css";
 
 
-const CustomModal = lazy(() => import('../components/Modal'));
 
 const states = [
     {
@@ -363,18 +364,17 @@ const CreateEmployee = () => {
                 />
             </form>
             <button onClick={saveEmployee}>Save</button>
-            <Suspense fallback={<div>Loading...</div>}>
-                {modalIsOpen && (
-                    <CustomModal
-                        isOpen={modalIsOpen}
-                        onClose={() => setModalIsOpen(false)}
-                    >
-                        <h2>Employee Created!</h2>
-                        <button onClick={() => setModalIsOpen(false)}>Close</button>
-                    </CustomModal>
-                )}
-            </Suspense>
-        </div>
+            {modalIsOpen && (
+                <Modal className='modal'
+                    show={modalIsOpen}
+                    onClose={() => setModalIsOpen(false)}
+                    title="Employee Created!"
+                >
+                    
+                </Modal>
+               
+                 )}
+                 </div>
     );
 };
 
